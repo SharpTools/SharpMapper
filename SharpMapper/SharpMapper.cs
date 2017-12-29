@@ -17,13 +17,23 @@ namespace SharpMapper {
         }
 
         public static void Copy(object from, object to) {
-            var fromType = from.GetType().GetTypeInfo();
-            var toType = to.GetType().GetTypeInfo();
+            var fromTypeInfo = from.GetType().GetTypeInfo();
+            var toTypeInfo = to.GetType().GetTypeInfo();
 
-            var fromProps = fromType.DeclaredProperties
+            if (IsListMapping(fromTypeInfo, toTypeInfo)) {
+                MapList((IList)from, fromTypeInfo, (IList)to, toTypeInfo);
+                return;
+            }
+
+            if (IsDictionaryMapping(fromTypeInfo, toTypeInfo)) {
+                MapDictionary((IDictionary)from, fromTypeInfo, (IDictionary)to, toTypeInfo);
+                return;
+            }
+
+            var fromProps = fromTypeInfo.DeclaredProperties
                                     .Where(p => p.CanRead);
             foreach(var fromProp in fromProps) {
-                var toProp = toType.GetDeclaredProperty(fromProp.Name);
+                var toProp = toTypeInfo.GetDeclaredProperty(fromProp.Name);
                 MapProp(from, fromProp, to, toProp);
             }
         }
@@ -40,15 +50,9 @@ namespace SharpMapper {
             var toPropType = toProp.PropertyType;
             var toPropTypeInfo = toPropType.GetTypeInfo();
 
-            if (IsListMapping(fromPropTypeInfo, toPropTypeInfo)) {
-                MapList(from, fromProp, to, toProp, toPropType);
-                return;
-            }
+            
 
-            if(IsDictionaryMapping(fromPropTypeInfo, toPropTypeInfo)) {
-                MapDictionary(from, fromProp, to, toProp, toPropType);
-                return;
-            }
+            
 
             var propValue = fromProp.GetValue(from);
             if (fromPropTypeInfo.IsValueType || fromPropType == typeof(String)) {
@@ -60,29 +64,23 @@ namespace SharpMapper {
             toProp.SetValue(to, obj);
         }
 
-        private static void MapList(object from, PropertyInfo fromProp, object to, PropertyInfo toProp, Type toPropType) {
-            var fromList = (IList)fromProp.GetValue(from);
-            var toList = (IList)toProp.GetValue(to);
-            if(toList == null) {
-                toList = (IList) Activator.CreateInstance(toPropType);
-                toProp.SetValue(to, toList);
-            }
-            foreach (var item in fromList) {
+        private static void MapList(IList from, 
+                                    TypeInfo fromTypeInfo,
+                                    IList to,
+                                    TypeInfo toTypeInfo) {
+            foreach (var item in from) {
                 var copy = Map(item, item.GetType());
-                toList.Add(copy);
+                to.Add(copy);
             }
         }
 
-        private static void MapDictionary(object from, PropertyInfo fromProp, object to, PropertyInfo toProp, Type toPropType) {
-            var fromDic = (IDictionary)fromProp.GetValue(from);
-            var toDic = (IDictionary)toProp.GetValue(to);
-            if (toDic == null) {
-                toDic = (IDictionary)Activator.CreateInstance(toPropType);
-                toProp.SetValue(to, toDic);
-            }
-            foreach (var key in fromDic.Keys) {
-                var copy = Map(fromDic[key], fromDic[key].GetType());
-                toDic[key] = copy;
+        private static void MapDictionary(IDictionary from, 
+                                          TypeInfo fromProp, 
+                                          IDictionary to, 
+                                          TypeInfo toProp) {
+            foreach (var key in from.Keys) {
+                var copy = Map(from[key], from[key].GetType());
+                to[key] = copy;
             }
         }
 

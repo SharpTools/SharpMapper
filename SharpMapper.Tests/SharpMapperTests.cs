@@ -90,6 +90,21 @@ namespace SharpMapper.Tests {
             var to = Mapper.Map<WithNullableTo>(from);
             Assert.Equal(0, to.Value);
         }
+
+        [Fact]
+        public void Should_map_lists() {
+            var from = new List<Foo> {
+                new Foo { Name="n1" },
+                new Foo { Name="n2" }
+            };
+            var to = Mapper.Map<List<Foo>>(from);
+            Assert.Equal(2, to.Count);
+            Assert.Equal("n1", to[0].Name);
+            Assert.Equal("n2", to[1].Name);
+
+            to[0].Name = "asdf";
+            Assert.Equal("n1", from[0].Name);
+        }
     }
 
     public class Foo {
