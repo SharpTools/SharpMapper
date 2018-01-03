@@ -21,7 +21,7 @@ namespace SharpMapper {
             var toTypeInfo = to.GetType().GetTypeInfo();
 
             if (IsListMapping(fromTypeInfo, toTypeInfo)) {
-                MapList((IList)from, fromTypeInfo, (IList)to, toTypeInfo);
+                MapList((IList)from, (IList)to);
                 return;
             }
 
@@ -65,11 +65,12 @@ namespace SharpMapper {
         }
 
         private static void MapList(IList from, 
-                                    TypeInfo fromTypeInfo,
-                                    IList to,
-                                    TypeInfo toTypeInfo) {
+                                    IList to) {
+            var toItemType = to.GetType()
+                               .GetTypeInfo()
+                               .GenericTypeArguments.FirstOrDefault();
             foreach (var item in from) {
-                var copy = Map(item, item.GetType());
+                var copy = Map(item, toItemType);
                 to.Add(copy);
             }
         }

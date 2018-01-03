@@ -105,6 +105,32 @@ namespace SharpMapper.Tests {
             to[0].Name = "asdf";
             Assert.Equal("n1", from[0].Name);
         }
+
+        [Fact]
+        public void Should_map_empty_lists() {
+            var from = new List<Foo>();
+            var to = Mapper.Map<List<Foo>>(from);
+            Assert.Equal(0, to.Count);
+
+            to.Add(new Foo());
+            Assert.Empty(from);
+        }
+
+        [Fact]
+        public void Should_map_lists_of_different_types() {
+            var from = new List<Foo> {
+                new Foo { Name="n1" },
+                new Foo { Name="n2" }
+            };
+
+            var to = Mapper.Map<List<Bar>>(from);
+            Assert.Equal(2, to.Count);
+            Assert.Equal("n1", to[0].Name);
+            Assert.Equal("n2", to[1].Name);
+
+            to[0].Name = "asdf";
+            Assert.Equal("n1", from[0].Name);
+        }
     }
 
     public class Foo {
