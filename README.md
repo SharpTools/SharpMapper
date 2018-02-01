@@ -10,12 +10,13 @@ SharpMapper will copy all properties from one object to another using the follow
 
  - property is present on target object
  - property name comparison is case insensitive
- - reference objects are created and have to have a parameter less constructor
+ - reference objects are created and have to have a parameterless constructor
  - the mapping is recursive following the object tree
+ - lists and dictionaries are copied and every object inside them is also created and copied
  - value properties are copied
  - nullable types can be copied to value types
  - null values from source are set null on target object
- - source and target classes can be different (it will copy matching properties)
+ - source and target classes can be different (it will only copy the matching properties)
  - **there is no need to pre-create a mapping**
  
 
