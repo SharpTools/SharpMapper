@@ -131,6 +131,18 @@ namespace SharpMapper.Tests {
             to[0].Name = "asdf";
             Assert.Equal("n1", from[0].Name);
         }
+
+        [Fact]
+        public void Should_map_when_some_property_is_null() {
+            var foo = new FooWithBar {
+                Name = "foo",
+                Age = 1
+            };
+            var copy = Mapper.Map<FooWithBar>(foo);
+            Assert.Equal("foo", copy.Name);
+            Assert.Equal(1, copy.Age);
+            Assert.Null(foo.Bar);
+        }
     }
 
     public class Foo {
@@ -154,5 +166,9 @@ namespace SharpMapper.Tests {
 
     public class WithNullableTo {
         public decimal Value { get; set; }
+    }
+
+    public class FooWithBar : Foo {
+        public Bar Bar { get; set; }
     }
 }

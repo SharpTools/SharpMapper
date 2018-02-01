@@ -17,8 +17,10 @@ namespace SharpMapper {
         }
 
         public static void Copy(object from, object to) {
-            var fromTypeInfo = from.GetType().GetTypeInfo();
-            var toTypeInfo = to.GetType().GetTypeInfo();
+            var fromType = from.GetType();
+            var toType = to.GetType();
+            var fromTypeInfo = fromType.GetTypeInfo();
+            var toTypeInfo = toType.GetTypeInfo();
 
             if (IsListMapping(fromTypeInfo, toTypeInfo)) {
                 MapList((IList)from, (IList)to);
@@ -30,10 +32,10 @@ namespace SharpMapper {
                 return;
             }
 
-            var fromProps = fromTypeInfo.DeclaredProperties
+            var fromProps = fromType.GetRuntimeProperties()
                                     .Where(p => p.CanRead);
             foreach(var fromProp in fromProps) {
-                var toProp = toTypeInfo.GetDeclaredProperty(fromProp.Name);
+                var toProp = toType.GetRuntimeProperty(fromProp.Name);
                 MapProp(from, fromProp, to, toProp);
             }
         }
@@ -49,13 +51,16 @@ namespace SharpMapper {
             var fromPropTypeInfo = fromPropType.GetTypeInfo();
             var toPropType = toProp.PropertyType;
             var toPropTypeInfo = toPropType.GetTypeInfo();
-
             
-
-            
-
             var propValue = fromProp.GetValue(from);
-            if (fromPropTypeInfo.IsValueType || fromPropType == typeof(String)) {
+            if (fromPropTypeInfo.IsValueType || 
+                fromPropType == typeof(String) ||
+                propValue == null) {
+
+                if(propValue == null && fromPropTypeInfo.IsValueType) {
+                    var type = Nullable.GetUnderlyingType(fromPropType);
+                    propValue = Activator.CreateInstance(type);
+                }
                 toProp.SetValue(to, propValue);
                 return;
             }
