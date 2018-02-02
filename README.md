@@ -13,6 +13,7 @@ SharpMapper will copy all properties from one object to another using the follow
  - reference objects are created and have to have a parameterless constructor
  - the mapping is recursive following the object tree
  - lists and dictionaries are copied and every object inside them is also created and copied
+ - objects are created only once, so if the same object appears in 2 properties of source, a single copy of it will be in the same 2 properties of target too
  - value properties are copied
  - nullable types can be copied to value types
  - null values from source are set null on target object
