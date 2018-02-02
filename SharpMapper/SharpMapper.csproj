@@ -3,10 +3,13 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.4</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.0-beta3</Version>
+    <Version>1.0.0-beta5</Version>
     <Authors>Andre Carlucci</Authors>
     <Company>Andre Carlucci</Company>
-    <Description>Simple .net object mapper</Description>
+    <Description>Super easy-to-use .net object mapper</Description>
+    <PackageProjectUrl>https://github.com/SharpTools/SharpMapper</PackageProjectUrl>
+    <PackageIconUrl>https://github.com/SharpTools/SharpMapper/raw/master/sharpmapper.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/SharpTools/SharpMapper</RepositoryUrl>
   </PropertyGroup>
 
 </Project>

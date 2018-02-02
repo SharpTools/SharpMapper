@@ -143,6 +143,33 @@ namespace SharpMapper.Tests {
             Assert.Equal(1, copy.Age);
             Assert.Null(foo.Bar);
         }
+
+        [Fact]
+        public void Should_not_clone_same_deep_object_twice() {
+            var bar = new Bar();
+            var foo = new Foo { Age = 42 };
+            bar.Foos.Add(foo);
+            bar.Foos.Add(foo);
+
+            var copy = Mapper.Map<Bar>(bar);
+            Assert.Equal(bar.Foos[0].Age, copy.Foos[0].Age);
+            Assert.Equal(bar.Foos[1].Age, copy.Foos[1].Age);
+            Assert.Equal(copy.Foos[0], copy.Foos[1]);
+        }
+
+        [Fact]
+        public void Should_not_deadlock_itself() {
+            var deadlock = new Deadlock();
+            deadlock.Self = deadlock;
+
+            var copy = Mapper.Map<Deadlock>(deadlock);
+
+            Assert.Equal(copy, copy.Self);
+        }
+    }
+
+    public class Deadlock {
+        public Deadlock Self { get; set; }
     }
 
     public class Foo {

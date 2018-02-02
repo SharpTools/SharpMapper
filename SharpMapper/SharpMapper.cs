@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
 namespace SharpMapper {
-    public static class Mapper {
+    public class Mapper {
 
         public static T Map<T>(object from) where T : new() {
             return (T)Map(from, typeof(T));
@@ -17,6 +18,18 @@ namespace SharpMapper {
         }
 
         public static void Copy(object from, object to) {
+            var mapper = new Mapper();
+            mapper._cache.Add(from.GetHashCode(), to);
+            mapper.CopyInternal(from, to);
+        }
+
+        private Dictionary<int, object> _cache = new Dictionary<int, object>();
+
+        private Mapper() {
+
+        }
+
+        private void CopyInternal(object from, object to) {
             var fromType = from.GetType();
             var toType = to.GetType();
             var fromTypeInfo = fromType.GetTypeInfo();
@@ -34,13 +47,13 @@ namespace SharpMapper {
 
             var fromProps = fromType.GetRuntimeProperties()
                                     .Where(p => p.CanRead);
-            foreach(var fromProp in fromProps) {
+            foreach (var fromProp in fromProps) {
                 var toProp = toType.GetRuntimeProperty(fromProp.Name);
                 MapProp(from, fromProp, to, toProp);
             }
         }
 
-        private static void MapProp(object from,    
+        private void MapProp(object from,    
                                     PropertyInfo fromProp, 
                                     object to, 
                                     PropertyInfo toProp) {
@@ -52,40 +65,40 @@ namespace SharpMapper {
             var toPropType = toProp.PropertyType;
             var toPropTypeInfo = toPropType.GetTypeInfo();
             
-            var propValue = fromProp.GetValue(from);
+            var fromValue = fromProp.GetValue(from);
             if (fromPropTypeInfo.IsValueType || 
                 fromPropType == typeof(String) ||
-                propValue == null) {
+                fromValue == null) {
 
-                if(propValue == null && fromPropTypeInfo.IsValueType) {
+                if(fromValue == null && fromPropTypeInfo.IsValueType) {
                     var type = Nullable.GetUnderlyingType(fromPropType);
-                    propValue = Activator.CreateInstance(type);
+                    fromValue = Activator.CreateInstance(type);
                 }
-                toProp.SetValue(to, propValue);
+                toProp.SetValue(to, fromValue);
                 return;
             }
-            var obj = Activator.CreateInstance(fromPropType);
-            Copy(propValue, obj);
-            toProp.SetValue(to, obj);
+
+            var toValue = CreateObjectFor(fromValue, toPropType);
+            toProp.SetValue(to, toValue);
         }
 
-        private static void MapList(IList from, 
-                                    IList to) {
+        private void MapList(IList from, 
+                             IList to) {
             var toItemType = to.GetType()
                                .GetTypeInfo()
                                .GenericTypeArguments.FirstOrDefault();
             foreach (var item in from) {
-                var copy = Map(item, toItemType);
+                var copy = CreateObjectFor(item, toItemType);
                 to.Add(copy);
             }
         }
 
-        private static void MapDictionary(IDictionary from, 
-                                          TypeInfo fromProp, 
-                                          IDictionary to, 
-                                          TypeInfo toProp) {
+        private void MapDictionary(IDictionary from, 
+                                   TypeInfo fromProp, 
+                                   IDictionary to, 
+                                   TypeInfo toProp) {
             foreach (var key in from.Keys) {
-                var copy = Map(from[key], from[key].GetType());
+                var copy = CreateObjectFor(from[key], from[key].GetType());
                 to[key] = copy;
             }
         }
@@ -102,5 +115,18 @@ namespace SharpMapper {
 
         private static TypeInfo _dicTypeInfo = typeof(IDictionary).GetTypeInfo();
         private static TypeInfo _listTypeInfo = typeof(IList).GetTypeInfo();
+
+        private object CreateObjectFor(object fromValue, Type toType) {
+            object toValue;
+            if (_cache.ContainsKey(fromValue.GetHashCode())) {
+                toValue = _cache[fromValue.GetHashCode()];
+            }
+            else {
+                toValue = Activator.CreateInstance(toType);
+                CopyInternal(fromValue, toValue);
+                _cache.Add(fromValue.GetHashCode(), toValue);
+            }
+            return toValue;
+        }
     }
 }
