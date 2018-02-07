@@ -8,7 +8,7 @@
     <Company>Andre Carlucci</Company>
     <Description>Super easy-to-use .net object mapper</Description>
     <PackageProjectUrl>https://github.com/SharpTools/SharpMapper</PackageProjectUrl>
-    <PackageIconUrl>https://github.com/SharpTools/SharpMapper/raw/master/sharpmapper.png</PackageIconUrl>
+    <PackageIconUrl>https://github.com/SharpTools/SharpMapper/raw/master/sharpmapper-white.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/SharpTools/SharpMapper</RepositoryUrl>
   </PropertyGroup>
 

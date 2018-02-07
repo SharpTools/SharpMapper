@@ -7,7 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpMapper", "SharpMapper\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpMapper.Tests", "SharpMapper.Tests\SharpMapper.Tests.csproj", "{35558943-F001-4950-981E-13EAABEF9F94}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpMapper.Perf.Cmd", "SharpMapper.Perf.Cmd\SharpMapper.Perf.Cmd.csproj", "{6DA75EE6-1027-49E2-BB6A-F2754DACA886}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpMapper.Perf.Cmd", "SharpMapper.Perf.Cmd\SharpMapper.Perf.Cmd.csproj", "{6DA75EE6-1027-49E2-BB6A-F2754DACA886}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{02850D32-4110-4412-B462-CE0AB26C9B90}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
