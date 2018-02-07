@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.4</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.0-beta5</Version>
+    <Version>1.0.17</Version>
     <Authors>Andre Carlucci</Authors>
     <Company>Andre Carlucci</Company>
     <Description>Super easy-to-use .net object mapper</Description>
