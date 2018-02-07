@@ -8,7 +8,7 @@ namespace SharpMapper.Tests {
                 SuperEnum = SuperEnum.Foo
             };
             var copy = Mapper.Map<FooWithEnum>(foo);
-            Assert.Equal(copy.SuperEnum, copy.SuperEnum);
+            Assert.Equal(foo.SuperEnum, copy.SuperEnum);
         }
 
         [Fact]
@@ -17,16 +17,16 @@ namespace SharpMapper.Tests {
                 SuperEnum = SuperEnum.Bar
             };
             var copy = Mapper.Map<FooWithEnumAsString>(foo);
-            Assert.Equal(copy.SuperEnum, copy.SuperEnum);
+            Assert.Equal(SuperEnum.Bar.ToString(), copy.SuperEnum);
         }
 
         [Fact]
         public void Should_map_enum_to_int() {
             var foo = new FooWithEnum {
-                SuperEnum = SuperEnum.Foo
+                SuperEnum = SuperEnum.Bar
             };
             var copy = Mapper.Map<FooWithEnumAsInt>(foo);
-            Assert.Equal(copy.SuperEnum, copy.SuperEnum);
+            Assert.Equal((int)SuperEnum.Bar, copy.SuperEnum);
         }
 
         [Fact]
@@ -35,7 +35,7 @@ namespace SharpMapper.Tests {
                 SuperEnum = SuperEnum.Bar.ToString()
             };
             var copy = Mapper.Map<FooWithEnum>(foo);
-            Assert.Equal(copy.SuperEnum, copy.SuperEnum);
+            Assert.Equal(SuperEnum.Bar, copy.SuperEnum);
         }
 
         [Fact]
@@ -44,7 +44,16 @@ namespace SharpMapper.Tests {
                 SuperEnum = (int) SuperEnum.Bar
             };
             var copy = Mapper.Map<FooWithEnum>(foo);
-            Assert.Equal(copy.SuperEnum, copy.SuperEnum);
+            Assert.Equal(SuperEnum.Bar, copy.SuperEnum);
+        }
+
+        [Fact]
+        public void Should_not_throw_when_mapping_unknown_value_for_enum() {
+            var foo = new FooWithEnumAsString {
+                SuperEnum = "asdf"
+            };
+            var copy = Mapper.Map<FooWithEnum>(foo);
+            Assert.Equal(default(SuperEnum), copy.SuperEnum);
         }
 
         public enum SuperEnum {

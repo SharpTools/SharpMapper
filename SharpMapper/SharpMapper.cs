@@ -76,7 +76,18 @@ namespace SharpMapper {
                     fromValue = fromValue.ToString();
                 }
                 else if(toPropTypeInfo.IsEnum && fromPropType == typeof(String)) {
-                    fromValue = Enum.Parse(toPropType, fromValue.ToString());
+                    var name = Enum.GetNames(toPropType)
+                                   .FirstOrDefault(p => p.ToLowerInvariant() == fromValue?.ToString().ToLowerInvariant());
+                    if(name != null) {
+                        foreach(var v in Enum.GetValues(toPropType)) {
+                            if(v.ToString() == name) {
+                                fromValue = v;
+                            }
+                        }
+                    }
+                    else {
+                        fromValue = Activator.CreateInstance(toPropType);
+                    }
                 }
                 toProp.SetValue(to, fromValue);
                 return;
