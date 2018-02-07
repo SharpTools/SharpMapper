@@ -18,6 +18,7 @@ SharpMapper will copy all properties from one object to another using the follow
  - nullable types can be copied to value types
  - null values from source are set null on target object
  - source and target classes can be different (it will only copy the matching properties)
+ - enums will also be mapped from and to strings and ints
  - **there is no need to pre-create a mapping**
  
 
