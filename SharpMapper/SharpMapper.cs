@@ -66,11 +66,13 @@ namespace SharpMapper {
             var toPropTypeInfo = toPropType.GetTypeInfo();
 
             var fromValue = fromProp.GetValue(from);
-
+            
             if (IsNotAnObject(fromPropType, fromPropTypeInfo, fromValue)) {
-                if (IsNullableType(fromPropTypeInfo, fromValue)) {
-                    var type = Nullable.GetUnderlyingType(fromPropType);
-                    fromValue = Activator.CreateInstance(type);
+                if (IsNullable(fromPropType)) {
+                    if(fromValue == null && !IsNullable(toPropType)) {
+                        var type = Nullable.GetUnderlyingType(fromPropType);
+                        fromValue = Activator.CreateInstance(type);
+                    }
                 }
                 else if(fromPropTypeInfo.IsEnum && toPropType == typeof(String)) {
                     fromValue = fromValue.ToString();
@@ -102,8 +104,12 @@ namespace SharpMapper {
                             fromPropType == typeof(String) ||
                             fromValue == null;
         }
-        private static bool IsNullableType(TypeInfo fromPropTypeInfo, object fromValue) {
-            return fromValue == null && fromPropTypeInfo.IsValueType;
+        //private static bool IsNullableType(TypeInfo fromPropTypeInfo, object fromValue) {
+        //    return fromValue == null && fromPropTypeInfo.IsValueType;
+        //}
+
+        public bool IsNullable(Type type) {
+            return Nullable.GetUnderlyingType(type) != null;
         }
 
         private void MapList(IList from, 

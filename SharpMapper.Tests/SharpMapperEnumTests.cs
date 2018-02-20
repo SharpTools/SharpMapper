@@ -41,7 +41,7 @@ namespace SharpMapper.Tests {
         [Fact]
         public void Should_map_int_to_enum() {
             var foo = new FooWithEnumAsInt {
-                SuperEnum = (int) SuperEnum.Bar
+                SuperEnum = (int)SuperEnum.Bar
             };
             var copy = Mapper.Map<FooWithEnum>(foo);
             Assert.Equal(SuperEnum.Bar, copy.SuperEnum);
